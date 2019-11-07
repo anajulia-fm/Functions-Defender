@@ -12,7 +12,7 @@ void teste();
 int main(){
     char c;
     int dPressedFlag=0, firstTimeFlag=1; // Flags
-    int speed=0, maxSpeed, speedCounter=0;  // VELOCIDADE
+    int speed=0, maxSpeed, speedCounter=0, increaseMaxSpeed=0;  // VELOCIDADE
     long double endKeyBoard_t=0, totalKeyBoard_t=0, auxKeyBoard_t=0; // TEMPO DE KBHIT
     long double start_t=0, end_t=0, total_t=0, aux_t=0; // TEMPO DO LAÇO
 
@@ -54,13 +54,13 @@ int main(){
                 endKeyBoard_t=0;
                 auxKeyBoard_t=0;
                 firstTimeFlag=1;
+                speed-=5;
+                if(speed<0){
+                    speed=0;
+                }
                 maxSpeed+=15;
                 if(maxSpeed>MAXSPEED){
                     maxSpeed=MAXSPEED;
-                }
-                speed-=10;
-                if(speed<0){
-                    speed=0;
                 }
             }
             aux_t=totalKeyBoard_t;
@@ -76,8 +76,8 @@ int main(){
             speedCounter++;
             if(speedCounter==2){
                 maxSpeed-=10;
-                if(maxSpeed<10){
-                    maxSpeed=10;
+                if(maxSpeed<15){
+                    maxSpeed=15;
                 }
                 speedCounter=0;
             }
