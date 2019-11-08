@@ -28,8 +28,8 @@ int main(){
     
     maxSpeed=MAXSPEED;
     while (1){
-        dPressedFlag=0;
         start_t=(double)clock()/CLOCKS_PER_SEC;
+        dPressedFlag=0;
         // Leitura de teclado 
         if(kbhit()){
             c=getch();
