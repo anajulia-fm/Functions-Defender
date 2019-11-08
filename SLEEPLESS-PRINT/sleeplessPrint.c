@@ -35,10 +35,34 @@ int main(){
             c=getch();
             switch (c)
             {
+                // D
                 case 'd':
+                case 'D':
+                case 77: // RIGHT-ARROW
                     dPressedFlag=1;
                     if(coolDown){
                         CoolDownAux_t=start_t;
+                    }
+                    break;
+                // W
+                case 'w':
+                case 'W':
+                case 72:  // UP-ARROW
+                    
+                    break;
+                // S
+                case 's':
+                case 'S':
+                case 80: // DOWN-ARROW
+        
+                    break;
+                // A
+                case 'a':
+                case 'A':
+                case 75: // LEFT-ARROW
+                    maxSpeed+=0.25;
+                    if(maxSpeed>MAXSPEED){
+                        maxSpeed=MAXSPEED;
                     }
                     break;
             }
