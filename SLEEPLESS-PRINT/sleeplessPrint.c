@@ -10,20 +10,27 @@
 void teste();
 
 int main(){
+    // MISCELLANEOUS:
     char c;
-    int dPressedFlag=0, CoolDownFlag=0, CoolDownFlagAux=0; // Flags
-    int coolDown=0;  // VELOCIDADE
+    
+    // 'FLAGS':
+    int dPressedFlag=0, CoolDownFlag=0, CoolDownFlagAux=0;
+    
+    // VELOCIDADE DO JOGADOR:
+    int coolDown=0; 
     float maxSpeed=0;
-    long double speed=0; //Velocidade
-    long double start_t=0, end_t=0, total_t=0; // TEMPO DO LAÇO
-    long double endKeyBoard_t=0, totalKeyBoard_t=0, auxKeyBoard_t=0, aux_t=0; // TEMPO DE KBHIT
-    long double CoolDownEnd_t, CoolDownAux_t, coolDownChecker_t=0; // Tempo de CoolDown
 
+    // 'TIMERS':
+    long double speed=0; // VELOCIDADE DO JOGADOR
+    long double start_t=0, end_t=0, total_t=0; // TEMPO DO LAÇO
+    long double CoolDownEnd_t, CoolDownAux_t, coolDownChecker_t=0; // TEMPO DE COOLDOWN
+
+    
     maxSpeed=MAXSPEED;
-    while (1)
-    {
+    while (1){
         dPressedFlag=0;
         start_t=(double)clock()/CLOCKS_PER_SEC;
+        // Leitura de teclado 
         if(kbhit()){
             c=getch();
             switch (c)
@@ -34,12 +41,8 @@ int main(){
                         CoolDownAux_t=start_t;
                     }
                     break;
-
-                default:
-                    dPressedFlag=0;
             }
         }
-
         end_t=(double)clock()/CLOCKS_PER_SEC;
         // Tempo total de execução
         total_t+=(end_t-start_t);
