@@ -14,7 +14,7 @@ typedef struct{
           - int points -> Score do jogador
           - char ship -> Representação do jogador
     */
-}player_t;
+}player_t; 
 
 void mk_player(player_t *p); // Função que define o jogador
 void ptr_player(player_t p); // Função que imprime o jogador
