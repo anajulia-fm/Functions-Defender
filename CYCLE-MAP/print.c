@@ -44,7 +44,7 @@ int main(){
                     }
                     flagL=1;
                 }
-                gotoxy(y+5, i+5);
+                gotoxy(y+5, i+5);  
                 printf("%d", matrizUniverso[i][j]);
             }
             if(flagL&&!horaDoLoop){
