@@ -7,7 +7,7 @@
 
 #define MAXSPEED 1.25
 
-void teste();
+void teste(); 
 
 int main(){
     // MISCELLANEOUS:
