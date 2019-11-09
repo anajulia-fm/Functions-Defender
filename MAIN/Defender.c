@@ -187,7 +187,7 @@ void makePlayer(player_t *p){
 void printPlayer(player_t p){
     int i;
     for(i=0;i<2;i++){
-        gotoxy(p.xasis, p.yasis-i);
+        gotoxy(p.staticXAsis, p.yasis-i);
         printf("%s\n", p.ship[i]);
     }
 }
