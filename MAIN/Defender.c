@@ -4,12 +4,13 @@
 #include<conio.h>
 #include<conio2.h>
 #include<math.h>
+#include<string.h>
 
 #define MAXSPEED 1.25
 #define MAXCOORDX 415
 
 // Player:
-typedef struct{  
+typedef struct{
     char ship[2][5];
     int staticXAsis, xAsis, yAsis, lifes, points;
     /*
@@ -44,12 +45,12 @@ int main(){
     // ex.: player.yAsis=i, de arquivoMapa[i][j]
     // e player.xAsis=j, da mesma matriz.
     int firstX, firstY;
-    
+
     // 'FLAGS':
     int dPressedFlag=0, CoolDownFlag=0, CoolDownFlagAux=0;
-    
+
     // VELOCIDADE DO JOGADOR:
-    int coolDown=0; 
+    int coolDown=0;
     float maxSpeed=0;
 
     // 'TIMERS':
@@ -64,13 +65,13 @@ int main(){
     firstX=10; // Pegar as cordenadas do char '@' no mapa lido
     firstY=10; // Pegar as cordenadas do char '@' no mapa lido
     player.staticXAsis=firstX;
-    player.yAsis=firstY
-
+    player.xAsis=firstX;
+    player.yAsis=firstY;
 
     while (1){
         start_t=(double)clock()/CLOCKS_PER_SEC;
         dPressedFlag=0;
-        // Leitura de teclado 
+        // Leitura de teclado
         if(kbhit()){
             c=getch();
             switch (c){
@@ -89,6 +90,7 @@ int main(){
                 case 72:  // UP-ARROW
                     clearPlayer(player);
                     player.yAsis--;
+                    printPlayer(player);
                     if(player.yAsis<=1){
                         player.yAsis=1; //Somar 1 no gotoxy(x, y); y=1 => header
                     }
@@ -99,6 +101,7 @@ int main(){
                 case 80: // DOWN-ARROW
                         clearPlayer(player);
                         player.yAsis++;
+                        printPlayer(player);
                         if(player.yAsis>=35){
                             player.yAsis=35;
                         }
@@ -120,7 +123,7 @@ int main(){
         speed+=(end_t-start_t);
         coolDownChecker_t+=(end_t-start_t);
         // Zera CoolDown
-        if (CoolDownAux_t-CoolDownEnd_t>=0.3){
+        if (CoolDownAux_t-CoolDownEnd_t>=1){
             CoolDownAux_t=0;
             CoolDownEnd_t=0;
             coolDown=0;
@@ -141,8 +144,8 @@ int main(){
         if(dPressedFlag){
             if(!coolDown){
                 maxSpeed-=0.25;
-                if(maxSpeed<0.25){
-                    maxSpeed=0.35;
+                if(maxSpeed<=0.25){
+                    maxSpeed=0.25;
                 }
                 coolDown=1;
                 CoolDownEnd_t=(double)clock()/CLOCKS_PER_SEC;
@@ -152,7 +155,11 @@ int main(){
         if(speed>=maxSpeed){
             if(maxSpeed!=MAXSPEED){
                 // Incrementa posição x da nave
+                clearPlayer(player);
                 player.xAsis++;
+                printPlayer(player);
+                gotoxy(1,1);
+                printf("(%d, %d)", player.xAsis, player.yAsis);
                 if(player.xAsis>=MAXCOORDX){
                     player.xAsis=MAXCOORDX;
                 }
@@ -169,15 +176,15 @@ int main(){
 // PLAYER:
 // Function que limpa a ultima posição do jogador:
 void clearPlayer(player_t p){
-    gotoxy(p.staticXAsis, p.yasis);
+    gotoxy(p.staticXAsis, p.yAsis);
     printf("    ");
-    gotoxy(p.staticXAsis, p.yasis+1);
+    gotoxy(p.staticXAsis, p.yAsis+1);
     printf("    ");
 }
 // Cria Jogador:
 void makePlayer(player_t *p){
-    p->xasis=0;
-    p->yasis=0;
+    p->xAsis=0;
+    p->yAsis=0;
     p->lifes=3;
     p->points=0;
     strncpy(p->ship[0], "@", 5);
@@ -187,7 +194,9 @@ void makePlayer(player_t *p){
 void printPlayer(player_t p){
     int i;
     for(i=0;i<2;i++){
-        gotoxy(p.staticXAsis, p.yasis-i);
-        printf("%s\n", p.ship[i]);
+        gotoxy(p.staticXAsis, p.yAsis+i);
+        printf("%s", p.ship[i]);
     }
 }
+
+//
