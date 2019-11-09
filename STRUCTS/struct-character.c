@@ -1,7 +1,8 @@
 
 #include<stdio.h>
 #include<string.h>
-
+#include<conio.h>
+#include<conio2.h>
 
 typedef struct{
     char ship[2][5];
@@ -14,25 +15,57 @@ typedef struct{
           - int points -> Score do jogador
           - char ship -> Representação do jogador
     */
-}player_t; 
+}player_t;
 
 void mk_player(player_t *p); // Função que define o jogador
 void ptr_player(player_t p); // Função que imprime o jogador
+// Limpa ultima posição do player:
+void clearPlayer(player_t p);
 
 int main(){
     player_t player;
+    char c;
+    int flag;
 
     mk_player(&player);
+    while (1)
+    {
+        flag=0;
+        c=getch();
+        if(c=='d'){
+            clearPlayer(player);
+            player.xasis++;
+            c='z';
+            flag=1;
+        }else if(c=='a'){
+            clearPlayer(player);
+            player.xasis--;
+            c='z';
+            flag=1;
+        }else if(c=='w'){
+            clearPlayer(player);
+            player.yasis--;
+            c='z';
+            flag=1;
+        }else if(c=='s'){
+            clearPlayer(player);
+            player.yasis++;
+            c='z';
+            flag=1;
+        }
+        if(flag){
+            ptr_player(player);
+        }
+    }
 
-    ptr_player(player);
 
     return 0;
 }
 
 void mk_player(player_t *p){
     // Valores de exemplo:
-    p->xasis=0;
-    p->yasis=0;
+    p->xasis=10;
+    p->yasis=10;
     p->lifes=3;
     p->points=0;
     strncpy(p->ship[0], "@", 5);
@@ -42,8 +75,16 @@ void mk_player(player_t *p){
 // Função de impressão, meramente para vizualização!!
 void ptr_player(player_t p){
     int i;
-    printf("\n Eixo X: %d, Eixo Y: %d, Vidas: %d, Pontos: %d\n\n", p.xasis, p.yasis, p.lifes, p.points);
     for(i=0;i<2;i++){
+        gotoxy(p.xasis, p.yasis+i);
         printf("%s\n", p.ship[i]);
     }
+}
+
+// Function que limpa a ultima posição do jogador:
+void clearPlayer(player_t p){
+    gotoxy(p.xasis, p.yasis);
+    printf(" ");
+    gotoxy(p.xasis, p.yasis+1);
+    printf("    ");
 }
