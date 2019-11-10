@@ -75,16 +75,17 @@ void mk_player(player_t *p){
 // Função de impressão, meramente para vizualização!!
 void ptr_player(player_t p){
     int i;
-    for(i=0;i<2;i++){
-        gotoxy(p.xasis, p.yasis+i);
-        printf("%s\n", p.ship[i]);
-    }
+
+    gotoxy(p.xasis, p.yasis-1);
+    printf("%s", p.ship[0]);
+    gotoxy(p.xasis, p.yasis);
+    printf("%s\n", p.ship[1]);
 }
 
 // Function que limpa a ultima posição do jogador:
 void clearPlayer(player_t p){
-    gotoxy(p.xasis, p.yasis);
+    gotoxy(p.xasis, p.yasis-1);
     printf(" ");
-    gotoxy(p.xasis, p.yasis+1);
+    gotoxy(p.xasis, p.yasis);
     printf("    ");
 }
