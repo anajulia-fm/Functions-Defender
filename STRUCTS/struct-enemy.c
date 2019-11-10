@@ -9,7 +9,7 @@
 
 // Enemy:
 typedef struct{
-    int active, xAsis, yAsis, lifes, printFlag;
+    int active, xAsis, yAsis, lifes, printFlag, move;
     char ship[2][3];
     /*
         Onde:
@@ -29,6 +29,10 @@ void makeEnemy(enemy_t e[ENEMYMAX]);
 int main(){
     enemy_t enemies[ENEMYMAX];
     makeEnemy(enemies);
+    while (1){
+        
+    }
+    
 
     return 0;
 }
