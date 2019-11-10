@@ -1,0 +1,21 @@
+Em formato de matriz:
+
+"CCCCCCCCCCCCCCC",
+"CCCCCC         ",
+" CCCC          ",
+"  CC           ",
+"               ",
+"               ",
+"               ",
+"               ",
+"               ",
+"               ",
+"               ",
+"               ",
+"CCC  C        C",
+"CCCCCCCC  CCCCC",
+"CCCCCCCCCCCCCCC"
+
+Em Linha
+
+"CCCCCCCCCCCCCCC", "CCCCCC         ", " CCCC          ", "  CC           ", "               ", "               ", "               ", "               ", "               ", "               ", "               ", "               ", "CCC  C        C", "CCCCCCCC  CCCCC", "CCCCCCCCCCCCCCC"
