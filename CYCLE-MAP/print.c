@@ -8,6 +8,11 @@
 #define MXIU 35  //  Valor maximo do I da matrizUniverso
 #define MXJBIN 76
 
+typedef struct{
+    int initalX, finalX;
+    int u[MXIU][MXJU];
+}map_t;
+
 int ptr_map(int matrizUniverso[][MXJU], int x);
 void fillGaps(char mapaDoArquivoBinario[][MXJBIN]);
 
@@ -15,7 +20,8 @@ int main(){
     // Variaveis de visualizacao:
     int x=0, endgame=0, aux=0;
     char c;
-    // Variaveis da function:
+    // Variaveis da função:
+    map_t map;
     int matrizUniverso[MXIU][MXJU]; // Matriz universo
     char mapaDoArquivoBinario[MXIU][MXJBIN]={"CC                                                             CCCCCCCCCCCC", " CC                CCCCC                                     CCC           ", "  CCCCCC          CC   CC                               CCCCCC             ", "       CCCC     CCC     CC               CCCC         CCC                  ", "          CCCCCCC        C             CCC  CC      CCC                    ", "                         CCCCCCCCC    CC     CCCCCCCC                      ", "                                 CCCCCC                                    ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "           CCCCCCC                                                         ", "   CCCCCCCCC     C                                   C                     ", "CCCC             CC                                CC C                  CC", "                  CCC                             CC  CC                CC ", "                    CC                           CC    CCCCCCCCCCCCCCCCCC  ", "                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCC                         "};
 
