@@ -14,7 +14,7 @@ typedef struct{
 }map_t;
 
 // Imprime o map
-int ptr_map(map_t m);
+int printMap(map_t m);
 // Preenche o mapa lido com 'C's
 void fillGaps(char mapaDoArquivoBinario[][MXJBIN]);
 // Tranfere o conteudo do mapa lido para o mapa do jogo
@@ -34,7 +34,7 @@ int main(){
     // Function de Loop:
     makeMap(mapaDoArquivoBinario, &map);
     // So para visualização!
-    ptr_map(map);
+    printMap(map);
     while(!endgame){
         c=getch();
         if(c=='d'){
@@ -44,7 +44,7 @@ int main(){
             c='z';
         }
         if(x!=aux){
-            endgame=ptr_map(map);
+            endgame=printMap(map);
             aux=x;
         }
     }
@@ -53,7 +53,7 @@ return 0;
 }
 
 // Imprime o mapa
-int ptr_map(map_t m){
+int printMap(map_t m){
     int i, j, flag;
 
     flag=0;
