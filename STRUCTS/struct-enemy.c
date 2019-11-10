@@ -30,8 +30,6 @@ int main(){
     enemy_t enemies[ENEMYMAX];
     makeEnemy(enemies);
 
-    printf("%d", enemies[2].lifes);
-
     return 0;
 }
 
