@@ -13,8 +13,12 @@ typedef struct{
     int u[MXIU][MXJU];
 }map_t;
 
-int ptr_map(int matrizUniverso[][MXJU], int x);
+// Imprime o map
+int ptr_map(map_t m);
+// Preenche o mapa lido com 'C's
 void fillGaps(char mapaDoArquivoBinario[][MXJBIN]);
+// Tranfere o conteudo do mapa lido para o mapa do jogo
+void makeMap(char bin[][MXJBIN], map_t *m);
 
 int main(){
     // Variaveis de visualizacao:
@@ -22,23 +26,25 @@ int main(){
     char c;
     // Variaveis da função:
     map_t map;
-    int matrizUniverso[MXIU][MXJU]; // Matriz universo
+    //int matrizUniverso[MXIU][MXJU]; // Matriz universo
     char mapaDoArquivoBinario[MXIU][MXJBIN]={"CC                                                             CCCCCCCCCCCC", " CC                CCCCC                                     CCC           ", "  CCCCCC          CC   CC                               CCCCCC             ", "       CCCC     CCC     CC               CCCC         CCC                  ", "          CCCCCCC        C             CCC  CC      CCC                    ", "                         CCCCCCCCC    CC     CCCCCCCC                      ", "                                 CCCCCC                                    ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "           CCCCCCC                                                         ", "   CCCCCCCCC     C                                   C                     ", "CCCC             CC                                CC C                  CC", "                  CCC                             CC  CC                CC ", "                    CC                           CC    CCCCCCCCCCCCCCCCCC  ", "                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCC                         "};
 
     // Rotina FillGaps: Aloca uns nos 'buracos'
     fillGaps(mapaDoArquivoBinario);
     // Function de Loop:
-    makeMap(mapaDoArquivoBinario, matrizUniverso);
+    makeMap(mapaDoArquivoBinario, &map);
     // So para visualização!
-    ptr_map(matrizUniverso, x);
+    ptr_map(map);
     while(!endgame){
         c=getch();
         if(c=='d'){
-            x++;
+            map.finalX++;
+            map.initalX++;
+            x=map.initalX;
             c='z';
         }
         if(x!=aux){
-            endgame=ptr_map(matrizUniverso, x);
+            endgame=ptr_map(map);
             aux=x;
         }
     }
@@ -46,19 +52,20 @@ int main(){
 return 0;
 }
 
-int ptr_map(int matrizUniverso[][MXJU], int x){
+// Imprime o mapa
+int ptr_map(map_t m){
     int i, j, flag;
 
     flag=0;
     gotoxy(1, 2);
-    if(x!=415){
+    if(m.initalX!=415){
         for(i=0; i<MXIU; i++){
-            for(j=0+x; j<MXPTR+x; j++){
-                if(matrizUniverso[i][j]=='C'){
+            for(j=0+m.initalX; j<MXPTR+m.initalX; j++){
+                if(m.u[i][j]=='C'){
                     textcolor(WHITE);
                     printf("%c", 219);
                 }else{
-                    printf("x");
+                    printf(" ");
                 }
             }
             printf("\n");
@@ -69,7 +76,6 @@ int ptr_map(int matrizUniverso[][MXJU], int x){
 
     return flag;
 }
-
 // Preenche os espaços com uns:
 void fillGaps(char bin[][MXJBIN]){
     // FLAGS:
@@ -125,24 +131,25 @@ void fillGaps(char bin[][MXJBIN]){
         j++;
     }while(j!=MXJBIN-1);
 }
-
 // Copia a matriz mapaDoArquivoBinario quantas vezes for necessario
 // até preencher a matrizUniverso - mapa do jogo
-void makeMap(char bin[][MXJBIN], int mapU[][MXJU]){
-int i, j; // (x, y) da matriz Universo
-        int k, l; // (x, y) da matriz lida do arquivo
-        int horaDoLoop=0;
+void makeMap(char bin[][MXJBIN], map_t *m){
+    int i, j; // (x, y) da matriz Universo
+    int k, l; // (x, y) da matriz lida do arquivo
+    int horaDoLoop=0;
 
-        for(j=0, l=0; j<MXJU;j++, l++){
-            if(horaDoLoop){
-                l=0;
-            }
-            horaDoLoop=0;
-            for(i=0, k=0;i<MXIU;i++, k++){
-                if(l==MXJBIN-2){
-                    horaDoLoop=1;
-                }
-                mapU[i][j]=0+bin[k][l];
-            }
+    for(j=0, l=0; j<MXJU;j++, l++){
+        if(horaDoLoop){
+            l=0;
         }
+        horaDoLoop=0;
+        for(i=0, k=0;i<MXIU;i++, k++){
+            if(l==MXJBIN-2){
+                horaDoLoop=1;
+            }
+            m->u[i][j]=0+bin[k][l];
+        }
+    }
+    m->initalX=1;
+    m->finalX=MXPTR;
 }
