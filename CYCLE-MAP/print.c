@@ -148,6 +148,12 @@ void makeMap(char bin[][MXJBIN], map_t *m){
                 horaDoLoop=1;
             }
             m->u[i][j]=0+bin[k][l];
+            if(bin[k][l]=='@'){
+                //atribui valor ao x Fixo do player
+                bin[k][l]=' ';
+            }else if(bin[k][l]=='X'){
+                //Chama função que cria inimigos
+            }
         }
     }
     m->initalX=1;
