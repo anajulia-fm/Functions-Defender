@@ -40,9 +40,18 @@ void makeEnemy(int i, int j, enemy_t e[ENEMYMAX]);
 void moveEnemy(enemy_t e[ENEMYMAX]);
 
 //=========================================================
-// Só visualização:
-int ptr_map(int matrizUniverso[][MXJU], int x);
-void fillGaps(char mapaDoArquivoBinario[][MXJBIN]);
+    // Só visualização:
+    typedef struct{
+        int initalX, finalX;
+        int u[MXIU][MXJU];
+    }map_t;
+
+    // Imprime o map
+    int ptr_map(map_t m);
+    // Preenche o mapa lido com 'C's
+    void fillGaps(char mapaDoArquivoBinario[][MXJBIN]);
+    // Tranfere o conteudo do mapa lido para o mapa do jogo
+    void makeMap(char bin[][MXJBIN], map_t *m);
 
 #define MXPTR 105   // Limite de impressão
 #define MXJU 500 // Valor maximo do J da matrizUniverso
@@ -61,26 +70,18 @@ int main(){
     char c;
     long double start, end;
     char bin[15][16]={"CCCCCCCCCCCCCCC", "CCCCCC         ", " CCCC          ", "  CC           ", "               ", "               ", "               ", "               ", "               ", "               ", "              X", "               ", "CCC  C        C", "CCCCCCCC  CCCCC", "CCCCCCCCCCCCCCC"};
-    int matU[MXIU][MXJU];
 
+
+    // Cria Array de Inimigos:
     makeEnemyArray(e);
-    for(i=0;i<MXIU;i++){
-        for(j=0;j<MXJU;j++){
-            if(matU[i][j]=='X'){
-                makeEnemy(i, j, e);
-            }else if(matU[i][j]=='C'){
-                printf("%c", 219);
-            }else{
-                printf(" ");
-            }
-        }
-    }
     srand(time(NULL));
-    while (1){
+    while (!endgame){
+        // Inicia timer
         if(timeFlag){
             start=(double)clock()/CLOCKS_PER_SEC;
             timeFlag=0;
         }
+
         end=(double)clock()/CLOCKS_PER_SEC;
         if(end-start>=2){
             timeFlag=1;
@@ -93,7 +94,7 @@ int main(){
     return 0;
 }
 
-// Cria inimigos:
+// Cria Array de inimigos:
 void makeEnemyArray(enemy_t e[ENEMYMAX]){
     int i;
 
@@ -109,7 +110,7 @@ void makeEnemyArray(enemy_t e[ENEMYMAX]){
         strncpy(e[i].ship[1], "##", 3);
     }
 }
-
+// Cria um inimigo
 void makeEnemy(int i, int j, enemy_t e[ENEMYMAX]){
     static int enemyNumber=0;
     int k, flag;
@@ -130,7 +131,7 @@ void makeEnemy(int i, int j, enemy_t e[ENEMYMAX]){
         }while(!flag&);
     }
 }
-
+// Movimenta os inimigos
 void moveEnemy(enemy_t e[ENEMYMAX]){
     int i;
 
