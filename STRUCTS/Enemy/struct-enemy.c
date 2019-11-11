@@ -17,7 +17,7 @@ typedef struct{
     int lifes;
     int xAsis, yAsis;
     int print;
-    int move, moveFlag;
+    int move, moveFlag, needToMove;
     /*
         Onde:
           - int active -> Indica se o inimigo está ativo
@@ -71,8 +71,7 @@ int main(){
     int x=0, endgame=0, aux=0;
     char c;
     long double start, end;
-    char bin[MXIU][MXJBIN]={"CC                                                             CCCCCCCCCCCC", " CC                CCCCC                                     CCC           ", "  CCCCCC          CC   CC                               CCCCCC             ", "       CCCC     CCC     CC               CCCC         CCC                  ", "          CCCCCCC        C             CCC  CC      CCC                    ", "                         CCCCCCCCC    CC     CCCCCCCC                      ", "                                 CCCCCC                                    ", "                                                                           ", "                                                                           ", "                            X                                              ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "           CCCCCCC                                                         ", "   CCCCCCCCC     C                                   C                     ", "CCCC             CC                                CC C                  CC", "                  CCC                             CC  CC                CC ", "                    CC                           CC    CCCCCCCCCCCCCCCCCC  ", "                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCC                         "};
-
+    char bin[MXIU][MXJBIN]={"CC                                                             CCCCCCCCCCCC", " CC                CCCCC                                     CCC           ", "  CCCCCC          CC   CC                               CCCCCC             ", "       CCCC     CCC     CC               CCCC         CCC                  ", "          CCCCCCC        C             CCC  CC      CCC                    ", "                         CCCCCCCCC    CC     CCCCCCCC                      ", "                                 CCCCCC                                    ", "                                                                           ", "                                                                           ", "                            X                                              ", "                                                                           ", "                                     X                                     ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                          X", "                                                                           ", "                                                                           ", "           CCCCCCC                                                         ", "   CCCCCCCCC     C                                   C                     ", "CCCC             CC                                CC C                  CC", "                  CCC                             CC  CC                CC ", "                    CC                           CC    CCCCCCCCCCCCCCCCCC  ", "                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCC                         "};
     // Cria Array de Inimigos:
     makeEnemyArray(e);
 
@@ -91,13 +90,12 @@ int main(){
         if(c=='d'){
             map.finalX++;
             map.initalX++;
-            x=map.initalX;
             c='z';
         }
         end=(double)clock()/CLOCKS_PER_SEC;
-        if(x!=aux){
+        if(map.initalX!=aux){
             endgame=printMap(map);
-            aux=x;
+            aux=map.initalX;
             moveEnemy(e, map);
             printEnemy(e);
             timeFlag=1;
@@ -123,6 +121,7 @@ void makeEnemyArray(enemy_t e[ENEMYMAX]){
         e[i].move=0;
         e[i].print=0;
         e[i].moveFlag=0;
+        e[i].needToMove=1;
     }
 }
 // Cria um inimigo
@@ -151,63 +150,94 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
     int i;
 
     for(i=0;i<ENEMYMAX;i++){
+        if(e[i].xAsis<=m.initalX){
+            e[i].needToMove=0;
+        }
         // Move se estiver ativo
         if(e[i].active){
-            if(e[i].moveFlag==0){
-                e[i].move=0;
-            }
-            // Coloca uma posição
-            if(e[i].move==0){
-                e[i].move=ENEMYMOVMN+(rand()%(ENEMYMOVMX-ENEMYMOVMN+1));
-                e[i].moveFlag=4;
-            }
-            // Limpa posição anterir
-            if(e[i].print){
-                gotoxy(e[i].xAsis-m.initalX, e[i].yAsis);
-                printf("  ");
-                gotoxy(e[i].xAsis-m.initalX, e[i].yAsis-1);
-                printf("  ");
-            }
-            // Move eixo X
-            if((m.u[e[i].yAsis][e[i].xAsis-1]=='C'||m.u[e[i].yAsis][e[i].xAsis-2]=='C'||m.u[e[i].yAsis][e[i].xAsis-3]=='C')||(m.u[e[i].yAsis-1][e[i].xAsis-1]=='C'||m.u[e[i].yAsis-1][e[i].xAsis-2]=='C'||m.u[e[i].yAsis-1][e[i].xAsis-3]=='C')){
-                if(e[i].xAsis<=17){
-                    e[i].yAsis++;
-                }else{
-                    e[i].yAsis--;
-               }
-            }else{
-                e[i].xAsis--;
-                if(e[i].xAsis<0){
-                    e[i].xAsis==0;
+            if(e[i].needToMove){
+                if(e[i].moveFlag==0){
+                    e[i].move=0;
                 }
-            }
-            // Move eixo Y
-            switch (e[i].move){
-                // Para cima
-                case 1:
-                    if(m.u[e[i].yAsis-1][e[i].xAsis]=='C'||m.u[e[i].yAsis-2][e[i].xAsis]=='C'||m.u[e[i].yAsis-3][e[i].xAsis]=='C'||m.u[e[i].yAsis-4][e[i].xAsis]=='C'){
+                // Coloca uma posição
+                if(e[i].move==0){
+                    e[i].move=ENEMYMOVMN+(rand()%(ENEMYMOVMX-ENEMYMOVMN+1));
+                    e[i].moveFlag=4;
+                }
+                // Limpa posição anterir
+                if(e[i].print){
+                    gotoxy(e[i].xAsis-m.initalX, e[i].yAsis);
+                    textcolor(RED);
+                    printf("xx");
+                    gotoxy(e[i].xAsis-m.initalX, e[i].yAsis-1);
+                    textcolor(RED);
+                    printf("xx");
+                }
+                // Move eixo X
+                if((m.u[e[i].yAsis][e[i].xAsis-1]=='C'||m.u[e[i].yAsis][e[i].xAsis-2]=='C'||m.u[e[i].yAsis][e[i].xAsis-3]=='C')||(m.u[e[i].yAsis-1][e[i].xAsis-1]=='C'||m.u[e[i].yAsis-1][e[i].xAsis-2]=='C'||m.u[e[i].yAsis-1][e[i].xAsis-3]=='C')){
+                    if(e[i].xAsis<=17){
                         e[i].yAsis++;
-                        e[i].moveFlag=0;
-                    }else{
+                    }else if(e[i].xAsis>=18){
                         e[i].yAsis--;
                     }
-                    break;
-                // Linha reta
-                case 2:
-                    break;
-                // Para baixo
-                case 3:
-                    if(m.u[e[i].yAsis+1][e[i].xAsis]=='C'||m.u[e[i].yAsis+2][e[i].xAsis]=='C'||m.u[e[i].yAsis+3][e[i].xAsis]=='C'){
-                        e[i].yAsis--;
-                        e[i].moveFlag=0;
-                    }else{
-                        e[i].yAsis++;
+                    e[i].move=0;
+                }else{
+                    e[i].xAsis--;
+                    if(e[i].xAsis<0){
+                        e[i].xAsis==0;
                     }
-                    break;
-            }
-            e[i].moveFlag--;
-            if(e[i].moveFlag<0){
-                e[i].moveFlag=0;
+                    // Move eixo Y
+                    switch (e[i].move){
+                        // Para cima
+                        case 1:
+                            if((m.u[e[i].yAsis-2][e[i].xAsis]=='C'||m.u[e[i].yAsis-3][e[i].xAsis]=='C'||m.u[e[i].yAsis-4][e[i].xAsis]=='C'||m.u[e[i].yAsis-5][e[i].xAsis]=='C')||(m.u[e[i].yAsis-2][e[i].xAsis-1]=='C'||m.u[e[i].yAsis-3][e[i].xAsis-1]=='C'||m.u[e[i].yAsis-4][e[i].xAsis-1]=='C'||m.u[e[i].yAsis-5][e[i].xAsis-1]=='C')){
+                                e[i].yAsis++;
+                                e[i].moveFlag=0;
+                            }else{
+                                e[i].yAsis--;
+                            }
+                            break;
+                        // Linha reta
+                        case 2:
+                            break;
+                        // Para baixo
+                        case 3:
+                            if((m.u[e[i].yAsis+1][e[i].xAsis]=='C'||m.u[e[i].yAsis+2][e[i].xAsis]=='C'||m.u[e[i].yAsis+3][e[i].xAsis]=='C')||(m.u[e[i].yAsis+1][e[i].xAsis-1]=='C'||m.u[e[i].yAsis+2][e[i].xAsis-1]=='C'||m.u[e[i].yAsis+3][e[i].xAsis-1]=='C')){
+                                e[i].yAsis--;
+                                e[i].moveFlag=0;
+                            }else{
+                                e[i].yAsis++;
+                            }
+                            break;
+                    }
+                    if(m.u[e[i].yAsis][e[i].xAsis]=='C'||m.u[e[i].yAsis-1][e[i].xAsis]=='C'||m.u[e[i].yAsis][e[i].xAsis-1]=='C'||m.u[e[i].yAsis-1][e[i].xAsis-1]=='C'){
+                        // Limpa posição anterir
+                        if(e[i].print){
+                            gotoxy(e[i].xAsis-m.initalX, e[i].yAsis);
+                            textcolor(RED);
+                            printf("xx");
+                            gotoxy(e[i].xAsis-m.initalX, e[i].yAsis-1);
+                            textcolor(RED);
+                            printf("xx");
+                        }
+                        if(e[i].xAsis<=17){
+                        e[i].yAsis++;
+                        }else if(e[i].xAsis>=18){
+                            e[i].yAsis--;
+                        }
+                        e[i].move=0;
+                    }
+                    e[i].moveFlag--;
+                    if(e[i].moveFlag<0){
+                        e[i].moveFlag=0;
+                    }
+                    if(e[i].xAsis>m.initalX&&e[i].xAsis<m.finalX){
+                       e[i].print=1;
+                    }else{
+                        e[i].print=0;
+                    }
+
+                }
             }
         }
     }
@@ -217,16 +247,14 @@ void printEnemy(enemy_t e[ENEMYMAX], map_t m){
     int i;
 
     for(i=0; i<ENEMYMAX; i++){
-        if(e[i].xAsis>m.initalX&&e[i].xAsis<m.finalX&&e[i].active){
-            e[i].print=1;
+        if(e[i].print&&e[i].active){
             gotoxy(e[i].xAsis-m.initalX, e[i].yAsis);
+            textcolor(WHITE);
             printf("##");
             gotoxy(e[i].xAsis-m.initalX, e[i].yAsis-1);
+            textcolor(WHITE);
             printf("##");
-        }else{
-            e[i].print=0;
         }
-        
     }
 }
 
@@ -272,7 +300,7 @@ int printMap(map_t m){
     gotoxy(1, 2);
     if(m.initalX!=415){
         for(i=0; i<MXIU; i++){
-            for(j=0+m.initalX; j<MXPTR+m.initalX; j++){
+            for(j=m.initalX; j<MXPTR+m.initalX; j++){
                 if(m.u[i][j]=='C'){
                     textcolor(WHITE);
                     printf("%c", 219);
