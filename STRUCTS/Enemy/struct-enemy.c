@@ -99,7 +99,7 @@ int main(){
             moveEnemy(e, map);
             printEnemy(e);
             timeFlag=1;
-        }else if(end-start>=0.25){
+        }else if(end-start>=1){
             timeFlag=1;
             moveEnemy(e, map);
             printEnemy(e);
@@ -149,6 +149,7 @@ void makeEnemy(int i, int j, enemy_t e[ENEMYMAX]){
 void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
     int i;
 
+    srand(time(NULL));
     for(i=0;i<ENEMYMAX;i++){
         if(e[i].xAsis<=m.initalX){
             e[i].needToMove=0;
@@ -167,30 +168,25 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
                 // Limpa posição anterir
                 if(e[i].print){
                     gotoxy(e[i].xAsis-m.initalX, e[i].yAsis);
-                    textcolor(RED);
-                    printf("xx");
+                    printf("  ");
                     gotoxy(e[i].xAsis-m.initalX, e[i].yAsis-1);
-                    textcolor(RED);
-                    printf("xx");
+                    printf("  ");
                 }
                 // Move eixo X
-                if((m.u[e[i].yAsis][e[i].xAsis-1]=='C'||m.u[e[i].yAsis][e[i].xAsis-2]=='C'||m.u[e[i].yAsis][e[i].xAsis-3]=='C')||(m.u[e[i].yAsis-1][e[i].xAsis-1]=='C'||m.u[e[i].yAsis-1][e[i].xAsis-2]=='C'||m.u[e[i].yAsis-1][e[i].xAsis-3]=='C')){
-                    if(e[i].xAsis<=17){
+                if(m.u[e[i].yAsis][e[i].xAsis-1]=='C'||m.u[e[i].yAsis][e[i].xAsis-2]=='C'||m.u[e[i].yAsis][e[i].xAsis-3]=='C'||m.u[e[i].yAsis][e[i].xAsis-4]=='C'||m.u[e[i].yAsis][e[i].xAsis-5]=='C'||m.u[e[i].yAsis-1][e[i].xAsis-1]=='C'||m.u[e[i].yAsis-1][e[i].xAsis-2]=='C'||m.u[e[i].yAsis-1][e[i].xAsis-3]=='C'||m.u[e[i].yAsis-1][e[i].xAsis-4]=='C'||m.u[e[i].yAsis-1][e[i].xAsis-5]=='C'){
+                    if(e[i].yAsis<=17){
                         e[i].yAsis++;
-                    }else if(e[i].xAsis>=18){
+                    }else if(e[i].yAsis>=18){
                         e[i].yAsis--;
                     }
-                    e[i].move=0;
+                    e[i].moveFlag=0;
                 }else{
                     e[i].xAsis--;
-                    if(e[i].xAsis<0){
-                        e[i].xAsis==0;
-                    }
                     // Move eixo Y
                     switch (e[i].move){
                         // Para cima
                         case 1:
-                            if((m.u[e[i].yAsis-2][e[i].xAsis]=='C'||m.u[e[i].yAsis-3][e[i].xAsis]=='C'||m.u[e[i].yAsis-4][e[i].xAsis]=='C'||m.u[e[i].yAsis-5][e[i].xAsis]=='C')||(m.u[e[i].yAsis-2][e[i].xAsis-1]=='C'||m.u[e[i].yAsis-3][e[i].xAsis-1]=='C'||m.u[e[i].yAsis-4][e[i].xAsis-1]=='C'||m.u[e[i].yAsis-5][e[i].xAsis-1]=='C')){
+                            if(m.u[e[i].yAsis-2][e[i].xAsis]=='C'||m.u[e[i].yAsis-3][e[i].xAsis]=='C'||m.u[e[i].yAsis-4][e[i].xAsis]=='C'||m.u[e[i].yAsis-5][e[i].xAsis]=='C'||m.u[e[i].yAsis-6][e[i].xAsis]=='C'||m.u[e[i].yAsis-2][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-3][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-4][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-5][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-6][e[i].xAsis+1]=='C'){
                                 e[i].yAsis++;
                                 e[i].moveFlag=0;
                             }else{
@@ -199,10 +195,17 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
                             break;
                         // Linha reta
                         case 2:
+                            if(m.u[e[i].yAsis-2][e[i].xAsis]=='C'||m.u[e[i].yAsis-2][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-3][e[i].xAsis]=='C'||m.u[e[i].yAsis-3][e[i].xAsis+1]=='C'){
+                                if(e[i].xAsis<=17){ 
+                                    e[i].yAsis++;
+                                }else if(e[i].xAsis>=18){
+                                        e[i].yAsis--;
+                                }
+                            }
                             break;
                         // Para baixo
                         case 3:
-                            if((m.u[e[i].yAsis+1][e[i].xAsis]=='C'||m.u[e[i].yAsis+2][e[i].xAsis]=='C'||m.u[e[i].yAsis+3][e[i].xAsis]=='C')||(m.u[e[i].yAsis+1][e[i].xAsis-1]=='C'||m.u[e[i].yAsis+2][e[i].xAsis-1]=='C'||m.u[e[i].yAsis+3][e[i].xAsis-1]=='C')){
+                            if(m.u[e[i].yAsis+1][e[i].xAsis]=='C'||m.u[e[i].yAsis+2][e[i].xAsis]=='C'||m.u[e[i].yAsis+3][e[i].xAsis]=='C'||m.u[e[i].yAsis+1][e[i].xAsis+1]=='C'||m.u[e[i].yAsis+2][e[i].xAsis+1]=='C'||m.u[e[i].yAsis+3][e[i].xAsis+1]=='C'){
                                 e[i].yAsis--;
                                 e[i].moveFlag=0;
                             }else{
@@ -210,19 +213,10 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
                             }
                             break;
                     }
-                    if(m.u[e[i].yAsis][e[i].xAsis]=='C'||m.u[e[i].yAsis-1][e[i].xAsis]=='C'||m.u[e[i].yAsis][e[i].xAsis-1]=='C'||m.u[e[i].yAsis-1][e[i].xAsis-1]=='C'){
-                        // Limpa posição anterir
-                        if(e[i].print){
-                            gotoxy(e[i].xAsis-m.initalX, e[i].yAsis);
-                            textcolor(RED);
-                            printf("xx");
-                            gotoxy(e[i].xAsis-m.initalX, e[i].yAsis-1);
-                            textcolor(RED);
-                            printf("xx");
-                        }
-                        if(e[i].xAsis<=17){
+                    if(m.u[e[i].yAsis][e[i].xAsis]=='C'||m.u[e[i].yAsis-1][e[i].xAsis]=='C'||m.u[e[i].yAsis][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-1][e[i].xAsis+1]=='C'){
+                        if(e[i].yAsis<=17){
                         e[i].yAsis++;
-                        }else if(e[i].xAsis>=18){
+                        }else if(e[i].yAsis>=18){
                             e[i].yAsis--;
                         }
                         e[i].move=0;
@@ -230,11 +224,6 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
                     e[i].moveFlag--;
                     if(e[i].moveFlag<0){
                         e[i].moveFlag=0;
-                    }
-                    if(e[i].xAsis>m.initalX&&e[i].xAsis<m.finalX){
-                       e[i].print=1;
-                    }else{
-                        e[i].print=0;
                     }
 
                 }
@@ -247,13 +236,14 @@ void printEnemy(enemy_t e[ENEMYMAX], map_t m){
     int i;
 
     for(i=0; i<ENEMYMAX; i++){
-        if(e[i].print&&e[i].active){
+        if(e[i].xAsis>m.initalX&&e[i].xAsis<m.finalX&&e[i].active){
+            e[i].print=1;
             gotoxy(e[i].xAsis-m.initalX, e[i].yAsis);
-            textcolor(WHITE);
-            printf("##");
+            printf("#%d", e[i].moveFlag);
             gotoxy(e[i].xAsis-m.initalX, e[i].yAsis-1);
-            textcolor(WHITE);
-            printf("##");
+            printf("#%d", e[i].move);
+        }else{
+            e[i].print=0;
         }
     }
 }
