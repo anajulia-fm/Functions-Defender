@@ -51,18 +51,19 @@ typedef struct{
 // Função que cria um Array de inimigos Default:
 void makeEnemyArray(enemy_t e[ENEMYMAX]);
 // Função que cria um inimigo:
-void makeEnemy(int i, int j, enemy_t e[ENEMYMAX]);
+void makeEnemy(int i, int j, enemy_t e[ENEMYMAX], int *enemyNumber);
 // Fução que move os inimigos:
 void moveEnemy(enemy_t e[ENEMYMAX], map_t m);
 
 // MODIFICADA:
 // Tranfere o conteudo do mapa lido para o mapa do jogo
-void makeMap(char bin[][MXJBIN], map_t *m, enemy_t e[ENEMYMAX]);
+void makeMap(char bin[][MXJBIN], map_t *m, enemy_t e[ENEMYMAX], int *enemyNumber);
 
 
 int main(){
     // Variaveis da função:
     enemy_t e[ENEMYMAX];
+    int enemyNumber;
 
     //Variaveis de visualização:
     map_t map;
@@ -71,12 +72,13 @@ int main(){
     int x=0, endgame=0, aux=0;
     char c;
     long double start, end;
-    char bin[MXIU][MXJBIN]={"CC                                                             CCCCCCCCCCCC", " CC                CCCCC                                     CCC           ", "  CCCCCC          CC   CC                               CCCCCC             ", "       CCCC     CCC     CC               CCCC         CCC                  ", "          CCCCCCC        C             CCC  CC      CCC                    ", "                         CCCCCCCCC    CC     CCCCCCCC                      ", "                                 CCCCCC                                    ", "                                                                           ", "                                                                           ", "                            X                                              ", "                                                                           ", "                                     X                                     ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                          X", "                                                                           ", "                                                                           ", "           CCCCCCC                                                         ", "   CCCCCCCCC     C                                   C                     ", "CCCC             CC                                CC C                  CC", "                  CCC                             CC  CC                CC ", "                    CC                           CC    CCCCCCCCCCCCCCCCCC  ", "                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCC                         "};
+    char bin[MXIU][MXJBIN]={"CC                                                             CCCCCCCCCCCC", " CC                CCCCC                                     CCC           ", "  CCCCCC          CC   CC                               CCCCCC             ", "       CCCC     CCC     CC               CCCC         CCC                  ", "          CCCCCCC        C             CCC  CC      CCC                    ", "                         CCCCCCCCC    CC     CCCCCCCC                      ", "                                 CCCCCC                                    ", "                                                                           ", "                                                                           ", "                            X                                              ", "                                                                           ", "                                     X                                     ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                          X", "                                                                           ", "      X                                                                    ", "           CCCCCCC                                                         ", "   CCCCCCCCC     C                                   C                     ", "CCCC             CC                                CC C                  CC", "                  CCC                             CC  CC                CC ", "                    CC                           CC    CCCCCCCCCCCCCCCCCC  ", "                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCC                         "};
     // Cria Array de Inimigos:
     makeEnemyArray(e);
 
     fillGaps(bin);
-    makeMap(bin, &map, e);
+    enemyNumber=0;
+    makeMap(bin, &map, e, &enemyNumber);
     printMap(map);
     while(1){
         // Inicia timer
@@ -97,12 +99,12 @@ int main(){
             endgame=printMap(map);
             aux=map.initalX;
             moveEnemy(e, map);
-            printEnemy(e);
+            printEnemy(e, map);
             timeFlag=1;
-        }else if(end-start>=1){
+        }else if(end-start>=.25){
             timeFlag=1;
             moveEnemy(e, map);
-            printEnemy(e);
+            printEnemy(e, map);
         }
     }
 
@@ -125,11 +127,12 @@ void makeEnemyArray(enemy_t e[ENEMYMAX]){
     }
 }
 // Cria um inimigo
-void makeEnemy(int i, int j, enemy_t e[ENEMYMAX]){
-    static int enemyNumber=0;
+void makeEnemy(int i, int j, enemy_t e[ENEMYMAX], int *enemyNumber){
     int k, flag;
 
-    if(enemyNumber<ENEMYMAX){
+    gotoxy(1, 40);
+    printf("%d", *enemyNumber);
+    if(*enemyNumber<ENEMYMAX){
         flag=0;
         k=0;
         do{
@@ -138,7 +141,7 @@ void makeEnemy(int i, int j, enemy_t e[ENEMYMAX]){
                 e[k].xAsis=j;
                 e[k].yAsis=i;
                 flag=1;
-                enemyNumber++;
+                (*enemyNumber)++;
             }else{
                 k++;
             }
@@ -167,9 +170,9 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
                 }
                 // Limpa posição anterir
                 if(e[i].print){
-                    gotoxy(e[i].xAsis-m.initalX, e[i].yAsis);
+                    gotoxy(e[i].xAsis-m.initalX, e[i].yAsis+2);
                     printf("  ");
-                    gotoxy(e[i].xAsis-m.initalX, e[i].yAsis-1);
+                    gotoxy(e[i].xAsis-m.initalX, e[i].yAsis+1);
                     printf("  ");
                 }
                 // Move eixo X
@@ -180,7 +183,8 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
                         e[i].yAsis--;
                     }
                     e[i].moveFlag=0;
-                }else{
+                }
+                if(m.u[e[i].yAsis][e[i].xAsis-1]!='C'&&m.u[e[i].yAsis][e[i].xAsis-2]!='C'&&m.u[e[i].yAsis][e[i].xAsis-3]!='C'&&m.u[e[i].yAsis][e[i].xAsis-4]!='C'&&m.u[e[i].yAsis][e[i].xAsis-5]!='C'&&m.u[e[i].yAsis-1][e[i].xAsis-1]!='C'&&m.u[e[i].yAsis-1][e[i].xAsis-2]!='C'&&m.u[e[i].yAsis-1][e[i].xAsis-3]!='C'&&m.u[e[i].yAsis-1][e[i].xAsis-4]!='C'&&m.u[e[i].yAsis-1][e[i].xAsis-5]!='C'){
                     e[i].xAsis--;
                     // Move eixo Y
                     switch (e[i].move){
@@ -196,7 +200,7 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
                         // Linha reta
                         case 2:
                             if(m.u[e[i].yAsis-2][e[i].xAsis]=='C'||m.u[e[i].yAsis-2][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-3][e[i].xAsis]=='C'||m.u[e[i].yAsis-3][e[i].xAsis+1]=='C'){
-                                if(e[i].xAsis<=17){ 
+                                if(e[i].xAsis<=17){
                                     e[i].yAsis++;
                                 }else if(e[i].xAsis>=18){
                                         e[i].yAsis--;
@@ -213,14 +217,14 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
                             }
                             break;
                     }
-                    if(m.u[e[i].yAsis][e[i].xAsis]=='C'||m.u[e[i].yAsis-1][e[i].xAsis]=='C'||m.u[e[i].yAsis][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-1][e[i].xAsis+1]=='C'){
-                        if(e[i].yAsis<=17){
-                        e[i].yAsis++;
-                        }else if(e[i].yAsis>=18){
-                            e[i].yAsis--;
-                        }
-                        e[i].move=0;
-                    }
+                    // if(m.u[e[i].yAsis][e[i].xAsis]=='C'||m.u[e[i].yAsis-1][e[i].xAsis]=='C'||m.u[e[i].yAsis][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-1][e[i].xAsis+1]=='C'){
+                    //     if(e[i].yAsis<=17){
+                    //     e[i].yAsis++;
+                    //     }else if(e[i].yAsis>=18){
+                    //         e[i].yAsis--;
+                    //     }
+                    //     e[i].move=0;
+                    // }
                     e[i].moveFlag--;
                     if(e[i].moveFlag<0){
                         e[i].moveFlag=0;
@@ -234,13 +238,14 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
 // Vê se inimigo pode ser impresso:
 void printEnemy(enemy_t e[ENEMYMAX], map_t m){
     int i;
+    static int j;
 
     for(i=0; i<ENEMYMAX; i++){
         if(e[i].xAsis>m.initalX&&e[i].xAsis<m.finalX&&e[i].active){
             e[i].print=1;
-            gotoxy(e[i].xAsis-m.initalX, e[i].yAsis);
+            gotoxy(e[i].xAsis-m.initalX, e[i].yAsis+2);
             printf("#%d", e[i].moveFlag);
-            gotoxy(e[i].xAsis-m.initalX, e[i].yAsis-1);
+            gotoxy(e[i].xAsis-m.initalX, e[i].yAsis+1);
             printf("#%d", e[i].move);
         }else{
             e[i].print=0;
@@ -253,7 +258,7 @@ void printEnemy(enemy_t e[ENEMYMAX], map_t m){
 
 // Copia a matriz mapaDoArquivoBinario quantas vezes for necessario
 // até preencher a matrizUniverso - mapa do jogo
-void makeMap(char bin[][MXJBIN], map_t *m, enemy_t e[ENEMYMAX]){
+void makeMap(char bin[][MXJBIN], map_t *m, enemy_t e[ENEMYMAX], int *enemyNumber){
     int i, j; // (x, y) da matriz Universo
     int k, l; // (x, y) da matriz lida do arquivo
     int horaDoLoop=0;
@@ -272,7 +277,7 @@ void makeMap(char bin[][MXJBIN], map_t *m, enemy_t e[ENEMYMAX]){
                 //atribui valor ao x Fixo do player
                 bin[k][l]=' ';
             }else if(bin[k][l]=='X'){
-                makeEnemy(i, j, e);
+                makeEnemy(i, j, e, enemyNumber);
             }
         }
     }
