@@ -1,0 +1,251 @@
+#include<stdio.h>
+#include<windows.h>
+#include<time.h>
+#include<conio2.h>
+#include<conio.h>
+#include<stdlib.h>
+#define COL 35
+#define LIN 415
+
+
+typedef struct{
+    char ship[2][5];
+    int xasis, yasis, lifes, points;
+    /*
+        Onde:
+          - int xasis -> Posição X do jogador
+          - int yasis -> Posiçãp Y do jogador
+          - int lifes -> Numero de vidas do jogador
+          - int points -> Score do jogador
+          - char ship -> Representação do jogador
+    */
+}player_t;
+
+
+// eu sei que tu ja fez essa parte mas como eu ja tinha feito resolvi deixar
+
+
+
+/* prototipo highscore */
+ void HighScore (){
+}
+
+void AbreMapa ( char matriz[LIN][COL], char nome[]) // abre o arquivo do mapa
+{
+    FILE *arq;
+    char c;
+    int i,j;
+    arq = fopen(nome, "r");
+
+    if(arq == NULL) //testa se abriu o mapa
+    {
+        printf("Erro ao abrir arquivo\n");
+    }
+    else // se abriu faz a leitura do arquivo para dentro da matriz
+    {
+        for(i=0; i<LIN; i++)
+        {
+            for(j=0; j<COL; j++)
+            {
+                matriz[i][j] = getc(arq);
+            }
+        }
+        fclose(arq);
+    }
+}
+
+
+void ImprimeMapa (char matriz [LIN][COL])
+{
+
+    int i,j;
+    gotoxy(0,0);//começa no ponto 0,0 da tela
+    for(i=0; i<LIN; i++)
+    {
+        for(j=0; j<COL; j++)
+        {
+            matriz [i][j]; // tbm acho que essa funcao ta errada pq como eu disse n entendi muito bem como vc imprime o mapa
+
+        }
+    }
+}
+
+
+void Save(char matriz[LIN][COL],player_t p)
+{
+
+    FILE *arq;
+    char nome[60];
+    int i,j;
+
+    system("cls");
+    printf("\n NOME DO JOGADOR:   ");
+    fgets(nome,sizeof(nome),stdin);
+    arq = fopen(nome, "w");
+    if(arq != NULL) //testa se abriu o arquivo
+    {
+
+        fprintf(arq,"%d\n%d\n%d\n%d\n",p.lifes,p.points,p.yasis,p.xasis);//escreve as informações do jogador no arquivo
+        for(i=0; i<LIN; i++)
+        {
+            for(j=0; j<COL; j++)
+            {
+                putc(matriz[i][j],arq);
+            }
+        }
+        printf("%s SALVO COM SUCESSO",nome);
+        fclose(arq);
+
+    }
+
+    else
+    {
+        printf ("erro ao abrir arquivo!");
+    }
+}
+
+player_t abreMapaSalvo(char matriz[LIN][COL]) // abre o arquivo do mapa salvo
+{
+    FILE *arq;
+    char nomeArquivo[60];;
+    int i,j;
+    player_t p;
+
+    system("cls");
+    printf("NOME SALVO:  ");
+    fgets(nomeArquivo,sizeof(nomeArquivo),stdin);
+
+    if (nomeArquivo==NULL)
+    {
+        printf ("voce nao possui um arquivo com esse nome");
+    }
+
+    arq = fopen(nomeArquivo, "r");
+
+    if(arq != NULL) //testa se abriu o mapa
+    {
+        {
+            fscanf(arq,"%d%d%d%d\n",&p.lifes,&p.points,&p.yasis,&p.xasis);//le as informações do jogador
+            for(i=0; i<LIN; i++)
+            {
+                for(j=0; j<COL; j++)
+                {
+                    matriz[i][j] = getc(arq); // le o mapa
+                }
+            }
+            fclose(arq);
+        }
+    }
+    else
+    {
+        printf ("erro ao abrir o arquivo %s",nomeArquivo);
+    }
+
+    return p;
+}
+
+
+void ImprimeMapaSalvo(char matriz[LIN][COL]) // imprime o mapa
+{
+    int i,j;
+    player_t p;
+    gotoxy(0,0);//começa no pornto 0,0 da tela
+    for(i=0; i<LIN; i++)
+    {
+        for(j=0; j<COL; j++)
+        {
+            matriz [i][j]; //  acho que essa funçao ta errada pq n sei muto bem como vc abriu o mapa
+        }
+        makePlayer(p);
+    }
+}
+
+    void infos(player_t p)// imprime na tela do jogo as informacoes do jogador
+    {
+        int i;
+        gotoxy(1,1);
+        for(i=1; i<=COL/2; i++)
+        {
+            textcolor(YELLOW);
+            printf("*");
+            textcolor(RED);
+            printf("*");
+        }
+        textcolor(LIGHTCYAN);
+        printf("\n===Vidas((%d))===Pontos((%d))",p.lifes,p.points);
+
+        for(i=1; i<=COL/2; i++)
+        {
+            textcolor(YELLOW);
+            printf("*");
+            textcolor(RED);
+            printf("*");
+        }
+    }
+
+    void JogoCarregado(char matriz[LIN][COL])
+    {
+        player_t p;
+
+        p=abreMapaSalvo(matriz);
+        system("cls");
+        ImprimeMapaSalvo(matriz);
+        infos(p);
+    }
+
+    void NovoJogo(char matriz[LIN][COL])// começa um novo jogo
+    {
+        player_t p;
+        system("cls"); //apaga tudo que estava na tela
+        AbreMapa(matriz,"mapa1.txt");
+        ImprimeMapa(matriz);
+        makePlayer(player_t *p);
+        infos(p);
+    }
+    void FuncaoMenu (char matriz[LIN][COL])// le a opcao digitada no menu
+    {
+        char op;
+        do
+        {
+            op = getch(); //espera a tecla de opcao
+        }
+        while(op!='n'&&op!='c'&&op!='q'); //enquanto a opcao for valida
+        switch(op)
+        {
+        case'n':
+            NovoJogo(matriz);
+        case'c':
+                JogoCarregado(matriz);
+        case'q':
+            system("cls"); // apaga tudo que estava na tela
+            printf("\n\n\n\n\n\n\n                     *******FIM DE JOGO*******\n\n\n\n\n\n");
+            break;
+        case 'h':
+            HighScore();
+        }
+    }
+
+
+
+    void ImpressaoMenu (char matriz[LIN][COL])//imprime a 'interface' do menu
+    {
+        textcolor(RED);
+        printf("\n\n\n\n                             DEFENDER\n\n\n\n");
+        printf("\n\n                     SELECIONE A OPCAO DE JOGO\n\n\n");
+        printf("\n\n\n\n                           N- NOVO JOGO\n\n                           C- CARREGAR JOGO\n\n                           Q-SAIR DO JOGO\n\n                           H-HIGHSCORE");
+        FuncaoMenu(matriz);
+    }
+
+
+    int main ()
+    {
+        char m[LIN][COL];
+
+        ImpressaoMenu(m);
+
+        return 0;
+
+    }
+
+
+
