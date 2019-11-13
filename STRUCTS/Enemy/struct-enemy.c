@@ -6,10 +6,12 @@
 #include<conio2.h>
 #include<time.h>
 
+// Enemy
 #define ENEMYMAX 20
-
 #define ENEMYMOVMX 3
 #define ENEMYMOVMN 1
+// EnemyShoot
+#define MXSHOOT 50;
 
 // Enemy:
 typedef struct{
@@ -27,10 +29,24 @@ typedef struct{
           - int move -> Indica qual sera a movimentação do inimigo
           - int print -> Indica se deve ser impresso;
           - int moveFlag -> Indica a quanto tempo o inimigo se encontra em uma movimentação x
+          - int needToMove -> Indica que o inimigo precisa adotar uma movimentação
     */
 }enemy_t;
+// Enemy-Shoot:
+typedef struct{
+    int active;
+    int xAsis, yAsis;
+    int mov;
+    /*
+        Onde:
+        - int active -> Indica se o tiro esta ativo ou não
+        - int xAsis -> Indica a posição do tiro no eixo X
+        - int yAsis -> Indica a posição do tiro no eixo Y
+        - int mov -> Indica qual a movimentação adotada pelo tiro
+    */
+}enemyShoot_t;
 
-// Só visualização:
+// Só visualização: CYCLE-MAP
 //=========================================================
     #define MXPTR 105 // Limite de impressão
     #define MXJU 500 // Valor maximo do J da matrizUniverso
@@ -71,7 +87,7 @@ int main(){
     map_t map;
     int timeFlag=1;
     int i, j;
-    int x=0, endgame=0, aux=0;
+    int x=0, endGame=0, aux=0;
     char c;
     long double start, end;
     char bin[MXIU][MXJBIN]={"CC                                                             CCCCCCCCCCCC", " CC                CCCCC                                     CCC           ", "  CCCCCC          CC   CC                               CCCCCC             ", "       CCCC     CCC     CC               CCCC         CCC                  ", "          CCCCCCC        C             CCC  CC      CCC                    ", "                         CCCCCCCCC    CC     CCCCCCCC                      ", "                                 CCCCCC                                    ", "                                                                           ", "                                                                           ", "                            X                                              ", "                                                                           ", "                                     X                                     ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                          X", "                                                                           ", "      X                                                                    ", "           CCCCCCC                                                         ", "   CCCCCCCCC     C                                   C                     ", "CCCC             CC                                CC C                  CC", "                  CCC                             CC  CC                CC ", "                    CC                           CC    CCCCCCCCCCCCCCCCCC  ", "                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCC                         "};
@@ -82,7 +98,7 @@ int main(){
     enemyNumber=0;
     makeMap(bin, &map, e, &enemyNumber);
     printMap(map);
-    while(1){
+    while(!endGame){
         // Inicia timer
         if(timeFlag){
             start=(double)clock()/CLOCKS_PER_SEC;
@@ -98,7 +114,7 @@ int main(){
         }
         end=(double)clock()/CLOCKS_PER_SEC;
         if(map.initalX!=aux){
-            endgame=printMap(map);
+            printMap(map);
             aux=map.initalX;
             moveEnemy(e, map);
             printEnemy(e, map);
@@ -113,6 +129,7 @@ int main(){
     return 0;
 }
 
+// INIMIGO:
 // Cria Array de inimigos:
 void makeEnemyArray(enemy_t e[ENEMYMAX]){
     int i;
@@ -185,8 +202,7 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
                         e[i].yAsis--;
                     }
                     e[i].moveFlag=0;
-                }
-                if(m.u[e[i].yAsis][e[i].xAsis-1]!='C'&&m.u[e[i].yAsis][e[i].xAsis-2]!='C'&&m.u[e[i].yAsis][e[i].xAsis-3]!='C'&&m.u[e[i].yAsis][e[i].xAsis-4]!='C'&&m.u[e[i].yAsis][e[i].xAsis-5]!='C'&&m.u[e[i].yAsis-1][e[i].xAsis-1]!='C'&&m.u[e[i].yAsis-1][e[i].xAsis-2]!='C'&&m.u[e[i].yAsis-1][e[i].xAsis-3]!='C'&&m.u[e[i].yAsis-1][e[i].xAsis-4]!='C'&&m.u[e[i].yAsis-1][e[i].xAsis-5]!='C'){
+                }else{
                     e[i].xAsis--;
                     // Move eixo Y
                     switch (e[i].move){
@@ -194,7 +210,8 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
                         case 1:
                             if(m.u[e[i].yAsis-2][e[i].xAsis]=='C'||m.u[e[i].yAsis-3][e[i].xAsis]=='C'||m.u[e[i].yAsis-4][e[i].xAsis]=='C'||m.u[e[i].yAsis-5][e[i].xAsis]=='C'||m.u[e[i].yAsis-6][e[i].xAsis]=='C'||m.u[e[i].yAsis-2][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-3][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-4][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-5][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-6][e[i].xAsis+1]=='C'){
                                 e[i].yAsis++;
-                                e[i].moveFlag=0;
+                                e[i].move=3;
+                                e[i].moveFlag=4;
                             }else{
                                 e[i].yAsis--;
                             }
@@ -213,7 +230,8 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
                         case 3:
                             if(m.u[e[i].yAsis+1][e[i].xAsis]=='C'||m.u[e[i].yAsis+2][e[i].xAsis]=='C'||m.u[e[i].yAsis+3][e[i].xAsis]=='C'||m.u[e[i].yAsis+1][e[i].xAsis+1]=='C'||m.u[e[i].yAsis+2][e[i].xAsis+1]=='C'||m.u[e[i].yAsis+3][e[i].xAsis+1]=='C'){
                                 e[i].yAsis--;
-                                e[i].moveFlag=0;
+                                e[i].move=1;
+                                e[i].moveFlag=4;
                             }else{
                                 e[i].yAsis++;
                             }
@@ -246,6 +264,8 @@ void printEnemy(enemy_t e[ENEMYMAX], map_t m){
         }
     }
 }
+
+// SHOOTING:
 
 
 // MODIFICADAS: CYCLE-MAP/print.c -> this
