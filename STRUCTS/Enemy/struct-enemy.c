@@ -70,7 +70,7 @@ typedef struct{
     //PLAYER:
     typedef struct{
         char ship[2][5];
-        int xasis, yasis, lifes, points;
+        int xAsis, yAsis, lifes, points;
         /*
             Onde:
             - int xasis -> Posição X do jogador
@@ -119,8 +119,8 @@ int main(){
     char c;
     long double start, end;
     char bin[MXIU][MXJBIN]={"CC                                                             CCCCCCCCCCCC", " CC                CCCCC                                     CCC           ", "  CCCCCC          CC   CC                               CCCCCC             ", "       CCCC     CCC     CC               CCCC         CCC                  ", "          CCCCCCC        C             CCC  CC      CCC                    ", "                         CCCCCCCCC    CC     CCCCCCCC                      ", "                                 CCCCCC                                    ", "                                                                           ", "                                                                           ", "                            X                                              ", "                                                                           ", "                                     X                                     ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                          X", "                                                                           ", "      X                                                                    ", "           CCCCCCC                                                         ", "   CCCCCCCCC     C                                   C                     ", "CCCC             CC                                CC C                  CC", "                  CCC                             CC  CC                CC ", "                    CC                           CC    CCCCCCCCCCCCCCCCCC  ", "                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCC                         "};
-    
-    
+
+
     // Cria Array de Inimigos:
     makeEnemyArray(e);
     fillGaps(bin);
@@ -280,7 +280,6 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
 // Vê se inimigo pode ser impresso:
 void printEnemy(enemy_t e[ENEMYMAX], map_t m){
     int i;
-    static int j;
 
     for(i=0; i<ENEMYMAX; i++){
         if(e[i].xAsis>m.initalX&&e[i].xAsis<m.finalX&&e[i].active){
@@ -308,6 +307,7 @@ void makeEnemyShootArray(enemyShoot_t s[MXSHOOT]){
     }
 }
 
+// Cria tiro dos Inimigos
 void makeEnemyShoot(enemy_t e[ENEMYMAX]){
     int i, j;
 
@@ -327,22 +327,65 @@ void makeEnemyShoot(enemy_t e[ENEMYMAX]){
                     j++;
                 }
             }while(!e[i].shoot[j].active&&j<MXSHOOT);
-            
+
         }
     }
 }
-
-void moveEnemyShoot(enemy_t e[ENEMYMAX], ){
+// Move tiro dos Inimigos
+void moveEnemyShoot(enemy_t e[ENEMYMAX], player_t player, map_t map){
     int i, j;
 
     for(i=0;i<ENEMYMAX;i++){
         for(j=0;j<MXSHOOT;j++){
             if(e[i].shoot[j].active){
+                // Dá um movimento para o tiro:
                 if(e[i].shoot[j].mov==0){
-                    
+                    if(player.yAsis<e[i].yAsis){
+                        e[i].shoot[j].mov=1;
+                    }else if(player.yAsis>e[i].yAsis){
+                        e[i].shoot[j].mov=3;
+                    }else{
+                        e[i].shoot[j].mov=2;
+                    }
+                }
+                gotoxy(e[i].shoot[j].xAsis, e[i].shoot[j].yAsis+2);
+                printf(" ");
+                // Move os tiros:
+                switch (e[i].shoot[j].mov){
+                        // Tiro para cima:
+                        case 1:
+                            e[i].shoot[j].xAsis--;
+                            e[i].shoot[j].yAsis--;
+                            break;
+                        // Tiro em linha reta:
+                        case 2:
+                            e[i].shoot[j].xAsis--;
+                            break;
+                        // Tiro para baixo:
+                        case 3:
+                            e[i].shoot[j].xAsis--;
+                            e[i].shoot[j].yAsis++;
+                        break;
+
+                }
+                // Verifica se os tiros atingem o cenário:
+                if(map.u[e[i].shoot[j].yAsis-1][e[i].shoot[j].xAsis]=='C'||map.u[e[i].shoot[j].yAsis+1][e[i].shoot[j].xAsis]=='C'){
+                    e[i].shoot[j].active=0;
+                    e[i].shoot[j].mov=0;
                 }
             }
-        }        
+        }
+    }
+}
+// Imprime Tiro dos inimigos
+void printShoot(enemyShoot_t s[MXSHOOT], map_t map){
+    int i;
+
+    for(i=0; i<MXSHOOT; i++){
+        if(s[i].active){
+            gotoxy(s[i].xAsis-map.initalX, s[i].yAsis+2);
+            printf("%c", '.');
+        }
     }
 }
 
@@ -464,8 +507,8 @@ void fillGaps(char bin[][MXJBIN]){
 // Função que cria um jogador Default
 void mk_player(player_t *p){
     // Valores de exemplo:
-    p->xasis=10;
-    p->yasis=10;
+    p->xAsis=10;
+    p->yAsis=10;
     p->lifes=3;
     p->points=0;
     strncpy(p->ship[0], "@", 5);
