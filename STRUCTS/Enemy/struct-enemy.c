@@ -54,6 +54,8 @@ void makeEnemyArray(enemy_t e[ENEMYMAX]);
 void makeEnemy(int i, int j, enemy_t e[ENEMYMAX], int *enemyNumber);
 // Fução que move os inimigos:
 void moveEnemy(enemy_t e[ENEMYMAX], map_t m);
+// Função que imprime o Ininimigo:
+void printEnemy(enemy_t e[ENEMYMAX], map_t m);
 
 // MODIFICADA:
 // Tranfere o conteudo do mapa lido para o mapa do jogo
@@ -217,14 +219,6 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
                             }
                             break;
                     }
-                    // if(m.u[e[i].yAsis][e[i].xAsis]=='C'||m.u[e[i].yAsis-1][e[i].xAsis]=='C'||m.u[e[i].yAsis][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-1][e[i].xAsis+1]=='C'){
-                    //     if(e[i].yAsis<=17){
-                    //     e[i].yAsis++;
-                    //     }else if(e[i].yAsis>=18){
-                    //         e[i].yAsis--;
-                    //     }
-                    //     e[i].move=0;
-                    // }
                     e[i].moveFlag--;
                     if(e[i].moveFlag<0){
                         e[i].moveFlag=0;
