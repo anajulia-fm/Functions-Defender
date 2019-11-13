@@ -11,27 +11,8 @@
 #define ENEMYMOVMX 3
 #define ENEMYMOVMN 1
 // EnemyShoot
-#define MXSHOOT 50;
+#define MXSHOOT 10
 
-// Enemy:
-typedef struct{
-    int active;
-    int lifes;
-    int xAsis, yAsis;
-    int print;
-    int move, moveFlag, needToMove;
-    /*
-        Onde:
-          - int active -> Indica se o inimigo está ativo
-          - int xAsis -> Posção no eixo X
-          - int yAsis -> Posição no eixo Y
-          - int lifes -> Numero de vidas do inimigo
-          - int move -> Indica qual sera a movimentação do inimigo
-          - int print -> Indica se deve ser impresso;
-          - int moveFlag -> Indica a quanto tempo o inimigo se encontra em uma movimentação x
-          - int needToMove -> Indica que o inimigo precisa adotar uma movimentação
-    */
-}enemy_t;
 // Enemy-Shoot:
 typedef struct{
     int active;
@@ -45,9 +26,32 @@ typedef struct{
         - int mov -> Indica qual a movimentação adotada pelo tiro
     */
 }enemyShoot_t;
+// Enemy:
+typedef struct{
+    int active;
+    int lifes;
+    int xAsis, yAsis;
+    int print;
+    int move, moveFlag, needToMove;
+    enemyShoot_t shoot[MXSHOOT];
+    int needToShoot;
+    /*
+        Onde:
+          - int active -> Indica se o inimigo está ativo
+          - int xAsis -> Posção no eixo X
+          - int yAsis -> Posição no eixo Y
+          - int lifes -> Numero de vidas do inimigo
+          - int move -> Indica qual sera a movimentação do inimigo
+          - int print -> Indica se deve ser impresso;
+          - int moveFlag -> Indica a quanto tempo o inimigo se encontra em uma movimentação x
+          - int needToMove -> Indica que o inimigo precisa adotar uma movimentação
+          - enemyShoot_t -> Tiros do
+    */
+}enemy_t;
 
 // Só visualização: CYCLE-MAP
 //=========================================================
+    // MAPA:
     #define MXPTR 105 // Limite de impressão
     #define MXJU 500 // Valor maximo do J da matrizUniverso
     #define MXIU 35 //  Valor maximo do I da matrizUniverso
@@ -62,8 +66,27 @@ typedef struct{
     int printMap(map_t m);
     // Preenche o mapa lido com 'C's
     void fillGaps(char mapaDoArquivoBinario[][MXJBIN]);
+
+    //PLAYER:
+    typedef struct{
+        char ship[2][5];
+        int xasis, yasis, lifes, points;
+        /*
+            Onde:
+            - int xasis -> Posição X do jogador
+            - int yasis -> Posiçãp Y do jogador
+            - int lifes -> Numero de vidas do jogador
+            - int points -> Score do jogador
+            - char ship -> Representação do jogador
+        */
+    }player_t;
+    void mk_player(player_t *p); // Função que define o jogador
 //=========================================================
 
+
+
+
+// INIMIGO:
 // Função que cria um Array de inimigos Default:
 void makeEnemyArray(enemy_t e[ENEMYMAX]);
 // Função que cria um inimigo:
@@ -72,28 +95,34 @@ void makeEnemy(int i, int j, enemy_t e[ENEMYMAX], int *enemyNumber);
 void moveEnemy(enemy_t e[ENEMYMAX], map_t m);
 // Função que imprime o Ininimigo:
 void printEnemy(enemy_t e[ENEMYMAX], map_t m);
+// TIROS DO INIMIGO:
+// Função que cria um array de tiros Default
+void makeEnemyShootArray(enemyShoot_t s[MXSHOOT]);
 
 // MODIFICADA:
 // Tranfere o conteudo do mapa lido para o mapa do jogo
 void makeMap(char bin[][MXJBIN], map_t *m, enemy_t e[ENEMYMAX], int *enemyNumber);
 
-
+// MAIN
 int main(){
     // Variaveis da função:
     enemy_t e[ENEMYMAX];
     int enemyNumber;
 
+
     //Variaveis de visualização:
     map_t map;
+    player_t player;
     int timeFlag=1;
     int i, j;
     int x=0, endGame=0, aux=0;
     char c;
     long double start, end;
     char bin[MXIU][MXJBIN]={"CC                                                             CCCCCCCCCCCC", " CC                CCCCC                                     CCC           ", "  CCCCCC          CC   CC                               CCCCCC             ", "       CCCC     CCC     CC               CCCC         CCC                  ", "          CCCCCCC        C             CCC  CC      CCC                    ", "                         CCCCCCCCC    CC     CCCCCCCC                      ", "                                 CCCCCC                                    ", "                                                                           ", "                                                                           ", "                            X                                              ", "                                                                           ", "                                     X                                     ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                           ", "                                                                          X", "                                                                           ", "      X                                                                    ", "           CCCCCCC                                                         ", "   CCCCCCCCC     C                                   C                     ", "CCCC             CC                                CC C                  CC", "                  CCC                             CC  CC                CC ", "                    CC                           CC    CCCCCCCCCCCCCCCCCC  ", "                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCC                         "};
+    
+    
     // Cria Array de Inimigos:
     makeEnemyArray(e);
-
     fillGaps(bin);
     enemyNumber=0;
     makeMap(bin, &map, e, &enemyNumber);
@@ -119,6 +148,7 @@ int main(){
             moveEnemy(e, map);
             printEnemy(e, map);
             timeFlag=1;
+            gotoxy(1, 45);
         }else if(end-start>=.25){
             timeFlag=1;
             moveEnemy(e, map);
@@ -130,7 +160,7 @@ int main(){
 }
 
 // INIMIGO:
-// Cria Array de inimigos:
+// Cria Array de inimigos Default:
 void makeEnemyArray(enemy_t e[ENEMYMAX]){
     int i;
 
@@ -143,6 +173,8 @@ void makeEnemyArray(enemy_t e[ENEMYMAX]){
         e[i].print=0;
         e[i].moveFlag=0;
         e[i].needToMove=1;
+        e[i].needToShoot=0;
+        makeEnemyShootArray(e[i].shoot);
     }
 }
 // Cria um inimigo
@@ -218,12 +250,10 @@ void moveEnemy(enemy_t e[ENEMYMAX], map_t m){
                             break;
                         // Linha reta
                         case 2:
-                            if(m.u[e[i].yAsis-2][e[i].xAsis]=='C'||m.u[e[i].yAsis-2][e[i].xAsis+1]=='C'||m.u[e[i].yAsis-3][e[i].xAsis]=='C'||m.u[e[i].yAsis-3][e[i].xAsis+1]=='C'){
-                                if(e[i].xAsis<=17){
-                                    e[i].yAsis++;
-                                }else if(e[i].xAsis>=18){
-                                        e[i].yAsis--;
-                                }
+                            if(m.u[e[i].yAsis-2][e[i].xAsis]=='C'||m.u[e[i].yAsis-2][e[i].xAsis+1]=='C'){
+                                e[i].yAsis++;
+                            }else if(m.u[e[i].yAsis+1][e[i].xAsis+1]=='C'||m.u[e[i].yAsis+1][e[i].xAsis]=='C'){
+                                e[i].yAsis--;
                             }
                             break;
                         // Para baixo
@@ -266,6 +296,55 @@ void printEnemy(enemy_t e[ENEMYMAX], map_t m){
 }
 
 // SHOOTING:
+// Faz um array de tiros do inimigo Default:
+void makeEnemyShootArray(enemyShoot_t s[MXSHOOT]){
+    int i;
+
+    for(i=0;i<MXSHOOT;i++){
+        s[i].active=0;
+        s[i].xAsis=0;
+        s[i].yAsis=0;
+        s[i].mov=0;
+    }
+}
+
+void makeEnemyShoot(enemy_t e[ENEMYMAX]){
+    int i, j;
+
+    srand(time(NULL));
+    for(i=0;i<ENEMYMAX;i++){
+        j=0;
+        if(e[i].active&&e[i].print){
+            e[i].needToShoot=0+(rand()%(1-0+1));
+        }
+        if(e[i].needToShoot){
+            do{
+                if(!e[i].shoot[j].active){
+                    e[i].shoot[j].active=1;
+                    e[i].shoot[j].xAsis=e[i].xAsis-1;
+                    e[i].shoot[j].yAsis=e[i].yAsis;
+                }else{
+                    j++;
+                }
+            }while(!e[i].shoot[j].active&&j<MXSHOOT);
+            
+        }
+    }
+}
+
+void moveEnemyShoot(enemy_t e[ENEMYMAX], ){
+    int i, j;
+
+    for(i=0;i<ENEMYMAX;i++){
+        for(j=0;j<MXSHOOT;j++){
+            if(e[i].shoot[j].active){
+                if(e[i].shoot[j].mov==0){
+                    
+                }
+            }
+        }        
+    }
+}
 
 
 // MODIFICADAS: CYCLE-MAP/print.c -> this
@@ -379,4 +458,16 @@ void fillGaps(char bin[][MXJBIN]){
         }while(i<MXIU&&!iFlag);
         j++;
     }while(j!=MXJBIN-1);
+}
+
+// PLAYER:
+// Função que cria um jogador Default
+void mk_player(player_t *p){
+    // Valores de exemplo:
+    p->xasis=10;
+    p->yasis=10;
+    p->lifes=3;
+    p->points=0;
+    strncpy(p->ship[0], "@", 5);
+    strncpy(p->ship[1], "@@@@", 5);
 }
